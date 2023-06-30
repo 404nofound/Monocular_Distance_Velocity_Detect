@@ -1,0 +1,2 @@
+python track.py --source C:\Users\XXX\Desktop\video\9.mp4 --yolo_model yolov5l6.pt --deep_sort_model osnet_x1_0_imagenet --show-vid --save-vid
+python track.py --source C:\Users\XXX\Desktop\sift_out.mp4 --yolo_model crowdhuman_yolov5m.pt --deep_sort_model osnet_x1_0_imagenet --show-vid --save-vid
