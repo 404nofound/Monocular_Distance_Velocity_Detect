@@ -5,7 +5,7 @@ Improved from [Monocular_Distance_Detect](https://github.com/404nofound/Monocula
 
 # The Video Demo
 
-<img align="center" src="https://github.com/404nofound/Monocular_Distance_Velocity_Detect/test1.gif" alt="" width="640" height="360" style="display: inline; float: right"/>
+<img align="center" src="https://github.com/404nofound/Monocular_Distance_Velocity_Detect/blob/main/test_output.gif" alt="" width="640" height="360" style="display: inline; float: right"/>
 
 ## Install
 
@@ -14,7 +14,7 @@ Improved from [Monocular_Distance_Detect](https://github.com/404nofound/Monocula
 - `Pytorch`: Check the version (MUST be GPU instead of CPU) of packages provided by `conda` before install
 - `pip install -r requirement.txt`: install libraries before run the track.py script
 
-Note: GPU NVIDIA 3060 and above should use pytorch>=1.11
+Note: `GPU NVIDIA 3060` and above should use `pytorch>=1.11`
 
 ## Weights / Checkpoints
 - `Yolo_path: ./Monocular_Distance_Velocity_Detect/` 
@@ -25,8 +25,10 @@ if the program doesn't download the deep sort checkponts automatically, copy the
 ## Run
 
 ```
-python track.py --source YOUR_PATH\demo.mp4 --yolo_model yolov5l6.pt --deep_sort_model osnet_x1_0_imagenet --show-vid --save-vid --save-csv
+python track.py --source YOUR_PATH\demo.mp4 --yolo_model yolov5m.pt --deep_sort_model osnet_x1_0_imagenet --show-vid --save-vid --save-csv
 ```
+
+Note: **yolov5m.pt** & **osnet_x1_0_imagenet** could be selected by yourself.
 
 ## Batch Run
 
@@ -39,14 +41,6 @@ python run.py
 ## Output
 
 Output Path: `./runs/track/`
-
-```
-label = label + ' ' + str('%.1f' % d[0]) + 'm ' + str(location)
-```
-
-`d0` denotes distance.
-
-`location`: -1 means the targeted vehicle in the left; 0 in the center; 1 in the right.
 
 ## Important Parameters in `track.py`
 
