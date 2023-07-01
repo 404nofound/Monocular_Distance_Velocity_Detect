@@ -53,23 +53,29 @@ def compute_color_for_labels(label):
     color = [int((p * (label ** 2 - label + 1)) % 255) for p in palette]
     return tuple(color)
 
+#Your video/image resolution/size
+#画面分辨率
 W = 1280
 H = 720
+
 excel_path = r'./camera_parameters.xlsx'
 
 def camera_parameters(excel_path):
+    # Load Intrinsics matrix of Camera
     df_intrinsic = pd.read_excel(excel_path, sheet_name='内参矩阵', header=None)
+    # Load Extrinsics matrix of Camera
     df_p = pd.read_excel(excel_path, sheet_name='外参矩阵', header=None)
 
-    print('外参矩阵形状：', df_p.values.shape)
-    print('内参矩阵形状：', df_intrinsic.values.shape)
+    print('外参矩阵形状 intrinsics matrix shape：', df_p.values.shape)
+    print('内参矩阵形状 Extrinsics matrix shape：', df_intrinsic.values.shape)
 
     return df_p.values, df_intrinsic.values
 
 def object_point_world_position(u, v, w, h, p, k):
     u1 = u
     v1 = v + h / 2
-    print('图像坐标系关键点：', u1, v1)
+    #point (x,y) in image coordinate position
+    print('图像坐标系image_coordinate_position', u1, v1)
 
     #alpha = -(90 + 0) / (2 * math.pi)
     #peta = 0
@@ -77,11 +83,13 @@ def object_point_world_position(u, v, w, h, p, k):
 
     fx = k[0, 0]
     fy = k[1, 1]
+
+    #vertical height(m) from camera to the ground/road
     #相机高度
-    #关键参数，不准会导致结果不对
     Height = 0.5
+
+    #The angle between the camera len and the horizontal line(the moving direction of vehicle), default is 0
     #相机与水平线夹角, 默认为0 相机镜头正对前方，无倾斜
-    #关键参数，不准会导致结果不对
     angle_a = 0
     angle_b = math.atan((v1 - H / 2) / fy)
     angle_c = angle_b + angle_a
@@ -101,35 +109,40 @@ def object_point_world_position(u, v, w, h, p, k):
     print('point_c', point_c)
     print('k_inv', k_inv)
     print('p_inv', p_inv)
-    #相机坐标系下的关键点位置
+
+    #point (x,y) in camera coordinate position
     c_position = np.matmul(k_inv, depth * point_c)
-    print('相机坐标系c_position', c_position)
-    #世界坐标系下
+    print('相机坐标系camera_coordinate_position', c_position)
+
+    #point (x,y) in world coordinate position
     c_position = np.append(c_position, 1)
     c_position = np.transpose(c_position)
-
     c_position = np.matmul(p_inv, c_position)
-    print('世界坐标系position', c_position)
+    print('世界坐标系world_coordinate_position', c_position)
     d1 = np.array((c_position[0], c_position[1]), dtype=float)
 
     return d1
 
 def distance_func(kuang, xw=5, yw=0.1):
     print('\n','=' * 50)
-    print('开始测距')
+    print('开始测距 Begin Ranging')
     #fig = go.Figure()
+
+    #p=Extrinsics matrix, k=Intrinsics matrix
     #p外参矩阵, k内参矩阵
     p, k = camera_parameters(excel_path)
     if len(kuang):
         obj_position = []
         #u, v, w, h = kuang[1] * W, kuang[2] * H, kuang[3] * W, kuang[4] * H
         u, v, w, h = kuang[1], kuang[2], kuang[3], kuang[4]
-        # u,v中心点坐标 w,h框宽和框高
-        print('中心点', u, v)
-        print('框宽/高', w, h)
+
+        #u,v=center point(x,y) w,h=box width/height
+        #u,v中心点坐标 w,h框宽和框高
+        print('中心点 center point(x,y)', u, v)
+        print('框宽/高 box width/height', w, h)
         d1 = object_point_world_position(u, v, w, h, p, k)
     distance = 0
-    print('距离', d1)
+    print('距离 Distance', d1)
     if d1[0] <= 0:
         d1[:] = 0
     else:
@@ -302,13 +315,6 @@ def detect(opt):
 
                 outputs_list=outputs_list.append([[frame_idx,outputs[0]]])
 
-
-
-                # 这里提供roi的坐标   [173, 456], [966, 91], [1240, 122], [574, 515]
-                # pts1 = np.array([[200, 100], [500, 100], [500, 300], [200, 300]], np.int32)
-                # pts1 = pts1.reshape((-1, 1, 2))
-                # cv2.polylines(im0, [pts1], True, (0, 255, 255), thickness=2)
-
                 # draw boxes for visualization
                 distance_temp=[]
                 if len(outputs[i]) > 0:
@@ -321,25 +327,13 @@ def detect(opt):
 
                         bboxes = output[0:4]
                         points_list=[[output[0],output[1]],[output[2],output[3]],[output[2],output[1]],[output[0],output[3]]]
-                        # next=False
-                        # for e in points_list:
-                        #     if (200<=e[0]<=500) and (100<=e[1]<=300):
-                        #         next=True
-                        #         break
-                        # if not next:
-                        #     continue
 
-                        #print(output)
                         id = output[4]
 
                         pre_width=-999
                         pre_frame=-999
                         if len(outputs_list)>0:
                             for ind in range(frame_idx-1,-1,-1):
-                                # if (len(outputs_list)-1)<ind:
-                                #     continue
-                                # if len(outputs_list[ind])<2:
-                                #     continue
                                 if len(outputs_list[outputs_list[0]==ind])!=0:
                                     # [[1,2,3]]->[1,2,3]
                                     temp_outputs_list=outputs_list[outputs_list[0]==ind][1].to_list()[0]
@@ -353,12 +347,6 @@ def detect(opt):
                                     if pre_width!=-999:
                                         break
                         print('pre_frame:',pre_frame)
-
-                        # pre_distance=-999
-                        # for distance_item in distance_list:
-                        #     if distance_item[1]==id:
-                        #         pre_distance=distance_item[2]
-                        #         break
 
                         thickness=2
                         color=compute_color_for_labels(id)
@@ -390,11 +378,12 @@ def detect(opt):
                         velocity=-999
                         ttc=-999
                         if pre_width!=-999 and pre_distance!=-999:
+
+                            # Speed calculation
+                            #速度计算
                             velocity=(((abs(output[2]-output[0])-pre_width)/abs(output[2]-output[0]))*pre_distance)/((frame_idx-pre_frame)/20)
                             if d[0]>0 and velocity!=0:
                                 ttc=d[0]/velocity
-
-                        #ttt=[abs(output[2]-output[0]),pre_width,pre_distance,frame_idx,pre_frame]
 
                         if save_txt:
                             # to MOT format
@@ -464,10 +453,10 @@ def detect(opt):
     LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS, %.1fms deep sort update \
         per image at shape {(1, 3, *imgsz)}' % t)
 
+    # Modify the output path Here
     if save_csv:
         df = pd.DataFrame(storage)
-        #df.to_excel(str(save_dir / name_str+'.xlsx'),index=False)
-        df.to_excel('C:\\Users\\Eddy\\Desktop\\output_new2\\' +name_str+'.xlsx',index=False)
+        df.to_excel('Your_path/test.xlsx',index=False)
 
     if save_txt or save_vid:
         s = f"\n{len(list(save_dir.glob('tracks/*.txt')))} tracks saved to {save_dir / 'tracks'}" if save_txt else ''

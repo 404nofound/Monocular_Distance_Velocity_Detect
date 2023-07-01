@@ -25,7 +25,7 @@ if the program doesn't download the deep sort checkponts automatically, copy the
 ## Run
 
 ```
-python track.py --source YOUR_PATH\demo.mp4 --yolo_model yolov5l6.pt --deep_sort_model osnet_x1_0_imagenet --show-vid --save-vid
+python track.py --source YOUR_PATH\demo.mp4 --yolo_model yolov5l6.pt --deep_sort_model osnet_x1_0_imagenet --show-vid --save-vid --save-csv
 ```
 
 ## Batch Run
@@ -52,11 +52,11 @@ label = label + ' ' + str('%.1f' % d[0]) + 'm ' + str(location)
 
 ### Video/Image Resolution
 ```
-def __init__(self):
-    #Your video/image resolution/size
-    #画面分辨率
-    self.W = 1280
-    self.H = 720
+#Line 58
+#Your video/image resolution/size
+#画面分辨率
+W = 1280
+H = 720
 ```
 
 ### Vertical Height
@@ -76,7 +76,7 @@ angle_a = 0
 ### Detection Classes
 
 In track.py, we only detect the `['person', 'car', 'truck', 'bicycle', 'motorcycle', 'bus']`,
-follow [this](https://blog.csdn.net/weixin_44026604/article/details/115016636) and modified the `code(line 288, 319)` to add more.
+follow [this](https://blog.csdn.net/weixin_44026604/article/details/115016636) and modified the `code(line 301, 325)` to add more.
 
 ### Output Path (saved file)
 ```
