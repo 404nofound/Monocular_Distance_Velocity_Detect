@@ -4,6 +4,7 @@ Algorithm based on Yolo v5 and Deep Sort to detect surrounding vehicles' distanc
 Improved from [Monocular_Distance_Detect](https://github.com/404nofound/Monocular_Distance_Detect)
 
 # The Video Demo
+HD Video can be found [Here](https://github.com/404nofound/Monocular_Distance_Velocity_Detect/blob/main/test_output.mp4)
 
 <img align="center" src="https://github.com/404nofound/Monocular_Distance_Velocity_Detect/blob/main/test_output.gif" alt="" width="640" height="360" style="display: inline; float: right"/>
 
