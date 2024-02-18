@@ -1,6 +1,8 @@
 # Monocular_Distance_Velocity_Detect
 Algorithm based on Yolo v5 and Deep Sort to detect surrounding vehicles' distance and relative velocity
 
+使用Yolo v5和 Deep Sort实现车辆距离与相对速度检测
+
 Improved from [Monocular_Distance_Detect](https://github.com/404nofound/Monocular_Distance_Detect)
 
 # The Video Demo
